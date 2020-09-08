@@ -1,0 +1,58 @@
+/*
+	Copyright 2020 Myles Trevino
+	Licensed under the Apache License, Version 2.0
+	https://www.apache.org/licenses/LICENSE-2.0
+*/
+
+
+#version 330 core
+
+in vec3 fragment_position;
+in vec4 fragment_position_light_space;
+
+uniform float dft_height;
+uniform sampler2D shadow_map;
+
+out vec4 output_color;
+
+
+float calculate_shadow()
+{
+	vec3 projection = (fragment_position_light_space.xyz/
+		fragment_position_light_space.w)*.5f+.5f;
+
+	float current_depth = projection.z;
+	const float bias = .0005f;
+	vec2 texel_size = 1.f/textureSize(shadow_map, 0);
+	float shadow = 0.f;
+
+	for(int x = -1; x <= 1; ++x)
+	{
+		for(int y = -1; y <= 1; ++y)
+		{
+			float depth = texture(shadow_map, projection.xy+vec2(x, y)*texel_size).r;
+			shadow += current_depth-bias > depth ? 0.f : 1.f;
+		}
+	}
+
+	return shadow/9.f;
+}
+
+
+float color_interpolation(float x, float minimum, float maximum)
+{
+	x = clamp((x-minimum)/(maximum-minimum), 0.f, 1.f);
+	return sin(x*3.1425926f);
+}
+
+
+void main()
+{
+	// Color.
+	float h = fragment_position.y/dft_height;
+	vec3 color = vec3(color_interpolation(h, .15f, 1.5f),
+		color_interpolation(h, .6f, 2.f), color_interpolation(h, 0.f, .5f));
+
+	// Shadow.
+	output_color.rgb = color*(calculate_shadow()+.5f);
+}

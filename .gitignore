@@ -1,0 +1,15 @@
+# Copyright Myles Trevino
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+/Binaries
+/enc_temp_folder
+/Include
+/Intermediate
+/Libraries
+/Releases
+Resources.rc
+.vs
+*.sln
+*.vcxproj*
