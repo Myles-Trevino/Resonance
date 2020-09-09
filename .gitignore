@@ -11,5 +11,6 @@
 /Releases
 Resources.rc
 .vs
+*.xcodeproj
 *.sln
 *.vcxproj*

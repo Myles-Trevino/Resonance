@@ -21,24 +21,22 @@ void print_documentation()
 		"<dft window duration> <dft sample interval> <harmonic smoothing> <temporal smoothing> "
 		"<height multiplier>'. For example: 'configure 30 1 25 2 .3'."
 
-		"\n\nDFT window duration specifies the DFT window in milliseconds. Larger durations "
-		"display a wider range of frequencies, increasing the depth of the model and making it "
-		"smoother along its width."
+		"\n\nDFT window duration specifies the DFT window in milliseconds. Increase this to "
+		"extend the range of low-end frequencies represented in the model. The larger this "
+		"value is, the longer and smoother the model becomes on its Z axis, and the smoother "
+		"the model becomes along its X axis."
 		
-		"\n\nSample interval specifies the interval between when DFTs samples are taken in "
-		"milliseconds. Larger intervals skip more audio data, decreasing the width of the "
-		"model and making it rougher along its width."
+		"\n\nSample interval specifies the interval in milliseconds between when DFTs are "
+		"generated. Decrease this to increase the temporal resolution of the model. The "
+		"smaller this value is, the longer and smoother the model becomes on its X axis."
 
 		"\n\nHarmonic smoothing specifies the number of harmonically adjacent frequencies to "
-		"sample in each direction for each point of the model. The higher this is, the smoother "
-		"the model is along its depth."
+		"sample in each direction. Increase this to smooth the model along its Z axis."
 		
-		"\n\nTemporal smoothing specifies number of temporally adjacent DFTs to sample in each "
-		"direction for each point of the model. The higher this is, the smoother the model will "
-		"be along its width. This can help with maintaining a smooth result when using short DFT "
-		"windows or large sample intervals."
+		"\n\nTemporal smoothing specifies the number of temporally adjacent frequencies to "
+		"sample in each direction. Increase this to smooth the model along its X axis."
 
-		"\n\nHeight multiplier scales the height of the model relative to its default value."
+		"\n\nHeight multiplier scales the height of the model."
 
 		"\n\n---"
 
@@ -46,31 +44,30 @@ void print_documentation()
 		"example: 'view shadowplay.flac'."
 		
 		"\n\nThe file name must only contain alphanumeric characters, dashes, and periods "
-		"(no spaces). The supported audio file types are: FLAC, MP3, and WAV. Be careful "
-		"with the length of the audio file. Files more than a couple seconds long can be very "
-		"intensive depending on the configuration."
+		"(no spaces). Place the audio file next to the executable. The supported audio file "
+		"types are: FLAC, MP3, and WAV. Be careful with the length of the audio file. Files "
+		"more than a couple seconds long can be very intensive depending on the configuration."
 
-		"\n\nIn the Viewer, navigate using the 'W', 'A', 'S', and 'D' keys and the mouse. Hold "
+		"\n\nIn the viewer, navigate using the 'W', 'A', 'S', and 'D' keys and the mouse. Hold "
 		"'Shift' to move faster. Press 'L' to toggle mouse locking. Press the 'F' key to "
 		"toggle wireframe rendering. Use the left and right arrow keys to change the light "
 		"direction. Use the scrollwheel to change the FOV. Press the 'Esc' key to close the "
-		"Viewer."
+		"viewer."
 
 		"\n\n---"
 
 		"\n\nWhen you're ready, you can export the model by entering: 'export <file name> "
 		"<format> <orientation>'. For example: 'export shadowplay.flac ply z-up'."
 
-		"\n\nThe file name must only contain alphanumeric characters, dashes, and periods "
-		"(no spaces). The supported audio file types are: FLAC, MP3, and WAV."
+		"\n\nThe file name must follow the same guidelines as specified above for the "
+		"'view' command"
 		
-		"\n\nFormat must be one of: 'ply', 'obj', or 'stl'."
+		"\n\nThe format must be 'ply', 'obj', or 'stl'. STL is only recommended for very "
+		"small exports. Exporting as OBJ will generate a corresponding MTL file."
 		
 		"\n\nOrientation can be either 'z-up' or 'y-up'."
 
-		"\n\nExported models will be saved within the 'Exports' folder. STL is not "
-		"recommended for large exports. Exporting as OBJ will generate a corresponding MTL "
-		"file."
+		"\n\nExported models will be saved within the 'Exports' folder."
 
 		"\n\n---"
 		
@@ -96,16 +93,18 @@ void print_startup_message()
 void validate_command_parameters(const std::string& command, int required, size_t given)
 {
 	if(given != required) throw std::runtime_error{"'"+command+"' requires "
-		+std::to_string(required)+" parameters but "+std::to_string(given)+" were given."};
+		+std::to_string(required)+(required == 1 ? " parameter" : " parameters")+
+		" but "+(given > 0 ? "only " : "")+std::to_string(given)+
+		(given == 1 ? " was" : " were")+" given."};
 }
 
 
 void validate_name(const std::string& name)
 {
-	if(!std::regex_match(name, std::regex{"^[a-zA-Z0-9-.]+.(flac|mp3|wav)$"}))
+	if(!std::regex_match(name, std::regex{"^[a-zA-Z0-9-.]+.(flac|wav|mp3)$"}))
 		throw std::runtime_error{"Invalid audio file name. The file name must "
 			"consist only of alphanumeric characters, dashes, and periods, and be "
-			"either FLAC, MP3, or WAV."};
+			"either FLAC, WAV, or MP3."};
 }
 
 
