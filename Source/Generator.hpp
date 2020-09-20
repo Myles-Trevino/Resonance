@@ -25,7 +25,8 @@ namespace LV
 namespace LV::Generator
 {
 	void configure(float dft_window_duration, float sample_interval,
-		float harmonic_smoothing, float temporal_smoothing, float height_multiplier);
+		float harmonic_smoothing, float temporal_smoothing,
+		float height_multiplier, const std::string& logarithmic);
 
 	void generate(const std::string& file_name);
 

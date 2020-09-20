@@ -19,7 +19,7 @@ void print_documentation()
 {
 	std::cout<<"\nTo configure Resonance's model generation settings, enter: 'configure "
 		"<dft window duration> <dft sample interval> <harmonic smoothing> <temporal smoothing> "
-		"<height multiplier>'. For example: 'configure 30 1 25 2 .3'."
+		"<height multiplier> <logarithmic>'. For example: 'configure 30 1 15 0 .33 false'."
 
 		"\n\nDFT window duration specifies the DFT window in milliseconds. Increase this to "
 		"extend the range of low-end frequencies represented in the model. The larger this "
@@ -37,6 +37,11 @@ void print_documentation()
 		"sample in each direction. Increase this to smooth the model along its X axis."
 
 		"\n\nHeight multiplier scales the height of the model."
+
+		"\n\nLogarithmic can be either 'true' or 'false'. If it is true, the model will be "
+		"scaled logarithmically, making the high frequencies more compressed together and "
+		"the low frequencies expanded. If it is false, the model will be scaled linearly, "
+		"meaning all frequencies will occupy the same amount of space."
 
 		"\n\n---"
 
@@ -133,9 +138,10 @@ int main(int arguments_count, const char* arguments[])
 			// Parse and execute the command.
 			if(command_name == "configure")
 			{
-				validate_command_parameters(command_name, 5, tokens.size());
+				validate_command_parameters(command_name, 6, tokens.size());
 				LV::Generator::configure(std::stof(tokens[0]), std::stof(tokens[1]),
-					std::stof(tokens[2]), std::stof(tokens[3]), std::stof(tokens[4]));
+					std::stof(tokens[2]), std::stof(tokens[3]), std::stof(tokens[4]),
+					tokens[5]);
 			}
 
 			else if(command_name == "view")

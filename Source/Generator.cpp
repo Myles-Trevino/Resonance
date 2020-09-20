@@ -29,6 +29,7 @@ namespace
 	int harmonic_smoothing{15}; // Frequencies.
 	int temporal_smoothing{0}; // DFTs.
 	float height_multiplier{.33f};
+	bool logarithmic{false};
 
 	glm::ivec2 size;
 	float height;
@@ -271,10 +272,20 @@ namespace
 		for(int z{}; z < size.y; ++z)
 		{
 			// For each value in the DFT...
+			float previous_vertex_x{};
 			for(int x{}; x < size.x; ++x)
 			{
 				// Generate the vertex.
-				add_vertex(&dft_mesh, glm::fvec3{x, dft_data[z][x], z});
+				if(logarithmic)
+				{
+					float normalized_x{x/static_cast<float>(size.x)};
+					float log_x{std::clamp(-std::logf(normalized_x), .1f, 3.f)};
+					float vertex_x{previous_vertex_x+log_x};
+					add_vertex(&dft_mesh, glm::fvec3{vertex_x, dft_data[z][x], z});
+					previous_vertex_x = vertex_x;
+				}
+
+				else add_vertex(&dft_mesh, glm::fvec3{x, dft_data[z][x], z});
 
 				// Generate the indices.
 				if(z >= size.y-1 || x >= size.x-1) continue;
@@ -379,11 +390,15 @@ namespace
 
 
 void LV::Generator::configure(float dft_window_duration, float dft_sample_interval,
-	float harmonic_smoothing, float temporal_smoothing, float height_multiplier)
+	float harmonic_smoothing, float temporal_smoothing, float height_multiplier,
+	const std::string& logarithmic)
 {
 	std::cout<<"Configuring...\n";
 
 	// Validate.
+	if(logarithmic != "true" && logarithmic != "false") throw std::runtime_error{
+		"The logarithmic value must be either \"true\" or \"false\"."};
+
 	nonnegative_validation(dft_window_duration, "DFT window duration");
 	nonnegative_validation(dft_sample_interval, "DFT sample interval");
 	nonnegative_validation(temporal_smoothing, "temporal smoothing");
@@ -396,6 +411,7 @@ void LV::Generator::configure(float dft_window_duration, float dft_sample_interv
 	::harmonic_smoothing = static_cast<int>(harmonic_smoothing);
 	::temporal_smoothing = static_cast<int>(temporal_smoothing);
 	::height_multiplier = height_multiplier;
+	::logarithmic = logarithmic == "true" ? true : false;
 
 	std::cout<<"Configured.\n";
 }
