@@ -10,6 +10,7 @@
 /Libraries
 /Releases
 Resources.rc
+.DS_Store
 .vs
 *.xcodeproj
 *.sln
