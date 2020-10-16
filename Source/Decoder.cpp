@@ -30,7 +30,6 @@ namespace
 	struct SwrContext* resampler_context;
 	AVFrame* frame;
 	AVPacket packet;
-	uint64_t sample;
 	float** resample_buffer;
 	uint64_t channel_layout;
 
