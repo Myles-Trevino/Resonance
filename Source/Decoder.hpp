@@ -24,4 +24,6 @@ namespace LV::Decoder
 
 	// Getters.
 	const std::vector<float>& get_data();
+
+	const int get_sample_rate();
 }

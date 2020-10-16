@@ -36,6 +36,7 @@ namespace
 	glm::fmat4 center_matrix;
 
 	std::vector<float> audio_data;
+	int sample_rate;
 	std::vector<std::vector<float>> dft_data;
 	float dft_peak;
 	LV::Mesh dft_mesh;
@@ -70,6 +71,7 @@ namespace
 		LV::Decoder::initialize_resampler_and_decoder();
 		LV::Decoder::load_samples();
 		audio_data = LV::Decoder::get_data();
+		sample_rate = LV::Decoder::get_sample_rate();
 		LV::Decoder::destroy();
 	}
 
@@ -143,12 +145,12 @@ namespace
 	{
 		// Initialize.
 		const int dft_window_size{static_cast<int>(
-			LV::Constants::sample_rate*(dft_window_duration/1000.f))};
+			sample_rate*(dft_window_duration/1000.f))};
 
 		const int maximum_frequency{dft_window_size/2-1};
 
 		const int dft_sample_interval_size{static_cast<int>(
-			LV::Constants::sample_rate*(dft_sample_interval/1000.f))};
+			sample_rate*(dft_sample_interval/1000.f))};
 
 		const size_t generated_dft_count{audio_data.size()/dft_sample_interval_size};
 

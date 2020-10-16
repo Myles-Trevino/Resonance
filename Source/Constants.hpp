@@ -23,7 +23,6 @@ namespace LV::Constants
 	// Generator.
 	const std::string generated_data_directory{"Configurations/"};
 	const std::string generated_data_file_name_extension{".lrc"};
-	constexpr int sample_rate{44100};
 	constexpr int dft_noise_floor{90}; // Decibels.
 	constexpr float bottom{-50.f};
 

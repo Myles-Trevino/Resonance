@@ -21,7 +21,6 @@ extern "C"
 
 namespace
 {
-	constexpr int sample_rate{44100};
 	constexpr int channel_count{1};
 	constexpr AVSampleFormat sample_format{AV_SAMPLE_FMT_FLTP};
 
@@ -163,7 +162,7 @@ void LV::Decoder::initialize_resampler_and_decoder()
 {
 	// Initialize the resampler.
 	resampler_context = swr_alloc_set_opts(nullptr, AV_CH_LAYOUT_MONO,
-		sample_format, sample_rate, channel_layout,
+		sample_format, original_sample_rate, channel_layout,
 		codec_context->sample_fmt, original_sample_rate, 0, nullptr);
 
 	if(av_opt_set_int(resampler_context, "resampler", SWR_ENGINE_SOXR, NULL))
@@ -226,3 +225,5 @@ void LV::Decoder::destroy()
 
 
 const std::vector<float>& LV::Decoder::get_data(){ return data; }
+
+const int LV::Decoder::get_sample_rate(){ return original_sample_rate; }
